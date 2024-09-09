@@ -17,7 +17,6 @@ def message_loss_fn(recover_message, message):
     loss = loss_fn(recover_message, message)
     return loss.to(device)
 
-# 这里需要加入JPEG下面的具体的哪个.pt模型 name是 experiments/JPEG 但是这里load应该要load一个具体的模型 所以这里会报错
 
 def load(model, name):
     state_dicts = torch.load(name)
@@ -25,8 +24,7 @@ def load(model, name):
     model.load_state_dict(network_state_dict)
 
 
-# 这个报错应该就是文件方面的了 模型没问题 把文件路径弄对了就行
-# 似乎是不同进程的问题！不过已经解决了好几个问题了
+
 
 fed = FED()
 fed.cuda()
@@ -35,7 +33,6 @@ params_trainable = (list(filter(lambda p: p.requires_grad, fed.parameters())))
 optim = torch.optim.Adam(params_trainable, lr=c.lr, betas=c.betas, eps=1e-6, weight_decay=c.weight_decay)
 
 if c.train_continue:
-    # 这里c.suffix需要改为具体模型的名字
     load(fed, c.MODEL_PATH + c.suffix)
 
 setup_logger('train', 'logging', 'train_', level=logging.INFO, screen=True, tofile=True)
@@ -45,8 +42,6 @@ noise_layer = JpegSS(50)
 test_noise_layer = JpegTest(50)
 
 
-# 这里应该有个设置多线程的参数 设置为1就好
-# 或者就是加入 if __name__ == '__main__':
 
 
 if __name__ == '__main__':
